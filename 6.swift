@@ -72,7 +72,44 @@ class BoolV : Value {
     init(b: Bool) {
         self.b = b
     }
+}
 
+class StrV : Value {
+    var s : String
+
+    init(s: String) {
+        self.s = s
+    }
+}
+
+class CloV : Value {
+    var params : [String]
+    var body : ExprC
+    var env : EnV
+
+    init(params: [String], body: ExprC, env: EnV) {
+    self.params = params
+    self.body = body
+    self.env = env
+    }
+}
+
+class EnV {
+    var l : [Binding]
+
+    init(l: [Binding]) {
+        self.l = l
+    }
+}
+
+class Binding {
+    var name : String
+    var val : Value
+
+    init(name: String, val: Value) {
+        self.name = name
+        self.val = val
+    }
 }
 
 var hi = AppC(f: NumC(n: 5), args: [NumC(n: 10)])
