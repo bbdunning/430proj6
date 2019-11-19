@@ -1,0 +1,154 @@
+
+class ParseTests{
+
+	func runTests() {
+		
+		// num: "3" -> NumC(3)
+		//assert((parse(s: "3") as! NumC).n == 3)
+		
+		// str: "test" -> StrC("test")
+		//assert((parse(s: "test") as! StrC).s == "test")
+		
+		// TODO
+		// appc (addition): "(+ 3 2)" -> (AppC
+	}
+}
+
+class InterpTests {
+	
+	func testNumC() {
+		// 3 -> NumV(3)
+        let input = NumC(n: 3)
+		assert((interp(e: input, env: topEnv) as! NumV).n == 3)
+		print("testNumC: passed\n")
+    }
+	
+	func testStrC() {
+		// "test" -> StrV("test")
+        let input = StrC(s: "test")
+        assert((interp(e: input, env: topEnv) as! StrV).s == "test")
+		print("testStrC: passed\n")
+    }
+	
+	func testIdCBool() {
+		// "true" -> BoolV(true)
+		let input = IdC(s: "true")
+		assert((interp(e: input, env: topEnv) as! BoolV).b == true)
+		print("testIdCBool: passed\n")
+    }
+	
+    func testAdd() {
+		// (+ 3 2) -> NumV(5)
+        let input = AppC(f: IdC(s: "+"), args: [NumC(n: 3), NumC(n: 2)])
+        assert((interp(e: input, env: topEnv) as! NumV).n == 5)
+		print("testAdd: passed\n")
+    }
+	
+	func testSub() {
+		// (- 3 2) -> NumV(1)
+		let input = AppC(f: IdC(s: "-"), args: [NumC(n: 3), NumC(n: 2)]) 
+		assert((interp(e: input, env: topEnv) as! NumV).n == 1)
+		print("testSub: passed\n")
+	}
+    
+	func testMult() {
+		// (* 3 2) -> NumV(6)
+		let input = AppC(f: IdC(s: "*"), args: [NumC(n: 3), NumC(n: 2)])
+		assert((interp(e: input, env: topEnv) as! NumV).n == 6)
+		print("testMult: passed\n")
+	}
+	
+	func testDiv() {
+		// (/ 6 2) -> NumV(3)
+		let input = AppC(f: IdC(s: "/"), args: [NumC(n: 6), NumC(n: 2)])
+		assert((interp(e: input, env: topEnv) as! NumV).n == 3)
+		print("testDiv: passed\n")
+	}
+	
+    func testIfC() {
+		// (if true "true" "false") -> StrV("true")
+        let input = IfC(test: IdC(s: "true"), then: StrC(s: "true"), els: StrC(s: "false"))
+        assert((interp(e: input, env: topEnv) as! StrV).s == "true")
+		print("testIfC: passed\n")
+    }
+    
+    func testAppCLamC() {
+		// ((lam (x) (+ x x)) 5)
+        let lambda = LamC(params: ["x"], body: AppC(f: IdC(s: "+"), args: [IdC(s: "x"), IdC(s: "x")]))
+        let input = AppC(f: lambda, args: [NumC(n: 5)])
+        assert((interp(e: input, env: topEnv) as! NumV).n == 10)
+		print("testAppCLamC: passed\n")
+    }
+	
+	func runTests() {
+		
+		print("running interp tests:\n")
+		testNumC()	
+		testStrC()
+		testIdCBool()
+		testAdd()
+		testSub()
+		testMult()
+		testDiv()
+		testIfC()
+		testAppCLamC()
+		print("passed all interp tests!\n\n")
+		
+	}
+}
+
+class SerializeTests {
+	
+	func testNumV() {
+		// NumV(3) -> "3"
+		assert(serialize(v: NumV(n: 3)) == "3.0")
+		print("testNumV: passed\n")
+    }
+	
+	func testStrV() {
+		// StrV("test") -> "test"
+		assert(serialize(v: StrV(s: "test")) == "test")
+		print("testStrV: passed\n")
+    }
+	
+	func testBoolV() {
+		// BoolV(true) -> "true"
+		assert(serialize(v: BoolV(b: true)) == "true")
+		print("testBoolV: passed\n")
+	}
+	
+	func testCloV() {
+		// CloV([], NumC(3), topEnv) -> "#<procedure>"
+		assert(serialize(v: CloV(params: [], body: NumC(n: 3), env: topEnv)) == "#<procedure>")
+		print("testCloV: passed\n")
+	}
+		
+	func testPrimop() {
+		// Primop("+") -> "#<primop>"
+		assert(serialize(v: Primop(op: "+")) == "#<primop>")
+		print("testPrimop: passed\n")
+	}
+	
+	func nuke() {
+		// test case that fails on purpose
+		assert(serialize(v: StrV(s: "boom")) == "ouch")
+	}
+	
+	func runTests() {
+		
+		print("running serialize tests:\n")
+		testNumV()
+		testStrV()
+		testBoolV()
+		testCloV()
+		testPrimop()
+		print("passed all serialize tests\n\n")
+		
+		//print("the next test purposefully fails to show tests are running...\n")
+		//nuke()
+		
+	}
+}
+
+InterpTests().runTests()
+SerializeTests().runTests()
