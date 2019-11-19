@@ -106,7 +106,11 @@ typealias EnV = [String:Value]
 
 var topEnv: [String: Value] = 
     ["true": BoolV(b: true), 
-     "+" : Primop(op:"+")]
+     "+" : Primop(op:"+"),
+     "-" : Primop(op:"-"),
+     "*" : Primop(op:"*"),
+     "/" : Primop(op:"/")]
+
 func topInterp(e: ExprC) -> String {
     serialize(v:interp(e: e, env: topEnv))
 }
