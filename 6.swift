@@ -8,6 +8,14 @@ class NumC : ExprC {
     }
 }
 
+class IdC : ExprC {
+    var s: String
+
+    init(s: String) {
+        self.s = s
+    }
+}
+
 class StrC : ExprC {
     var s: String
     init(s: String) {
@@ -24,14 +32,6 @@ class IfC : ExprC {
         self.test = test
         self.then = then
         self.els = els
-    }
-}
-
-class IdC : ExprC {
-    var s: String
-
-    init(s: String) {
-        self.s = s
     }
 }
 
