@@ -94,23 +94,31 @@ class CloV : Value {
     }
 }
 
-class EnV {
-    var l : [Binding]
+typealias EnV = [String:Value]
 
-    init(l: [Binding]) {
-        self.l = l
+var topEnv: [String: Value] = [:]
+func topInterp(e: ExprC) -> Value {
+    interp(e: e, env: topEnv)
+}
+
+func interp(e: ExprC, env: EnV) -> Value {
+    switch e {
+    case is NumC:
+        let n = (e as! NumC)
+        return NumV(n: n.n)
+    case is IdC:
+        let i = (e as! IdC)
+        return lookup(s:i.s, env: env)
+    default:
+        return NumV(n: -1)
     }
 }
 
-class Binding {
-    var name : String
-    var val : Value
-
-    init(name: String, val: Value) {
-        self.name = name
-        self.val = val
-    }
+func lookup(s: String, env: EnV) -> Value {
+    return NumV(n: 0)
 }
+
+print((topInterp(e: NumC(n: 10)) as! NumV).n)
 
 var hi = AppC(f: NumC(n: 5), args: [NumC(n: 10)])
 print((hi.f as! NumC).n)
