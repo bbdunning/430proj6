@@ -106,10 +106,12 @@ typealias EnV = [String:Value]
 
 var topEnv: [String: Value] = 
     ["true": BoolV(b: true), 
+     "false": BoolV(b: false),
      "+" : Primop(op:"+"),
      "-" : Primop(op:"-"),
      "*" : Primop(op:"*"),
-     "/" : Primop(op:"/")]
+     "/" : Primop(op:"/"),
+     "equal?" : Primop(op:"equal?")]
 
 func topInterp(e: ExprC) -> String {
     serialize(v:interp(e: e, env: topEnv))
@@ -126,8 +128,12 @@ func serialize(v: Value) -> String {
     case is StrV:
         let q = (v as! StrV)
         return String(q.s)
+    case is CloV:
+        return "#<procedure>"
+    case is Primop:
+        return "#<primop>"
     default:
-        return "bad"
+        return "error"
     }
 }
 
@@ -199,12 +205,3 @@ func evalPrimop(op: String, args: [Value]) -> Value {
         return NumV(n: -1)
     }
 }
-
-print(topInterp(e: (IdC(s:"true"))))
-print(topInterp(e: AppC(f:IdC(s:"+"), args:[NumC(n:1), NumC(n:2)])))
-
-print(topInterp(e: NumC(n: 10)))
-
-var hi = AppC(f: NumC(n: 5), args: [NumC(n: 10)])
-
-print(extendEnV(params:["hi"], args:[NumV(n:2)], env: topEnv))
